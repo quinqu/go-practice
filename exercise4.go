@@ -34,8 +34,7 @@ func main() {
 	for k, v := range countsWithFiles {
 		if counts[k] > 1 {
 			fmt.Println(k)
-
-			fmt.Println("duplicated in ", v)
+			fmt.Println("\t duplicated in ", v)
 
 		}
 	}
