@@ -4,6 +4,7 @@
 // SetColorIndex in some interesting way
 
 // Lissajous generates GIF animations of random Lissajous figures.
+// Lissajous generates GIF animations of random Lissajous figures.
 package main
 
 import (
@@ -14,26 +15,19 @@ import (
 	"math"
 	"math/rand"
 	"os"
-	"time"
 )
 
-var palette2 = []color.Color{color.White, color.Black, color.RGBA{130, 20, 76, 1}, color.RGBA{30, 90, 200, 1}}
+var palette2 = []color.Color{color.White, color.Black, color.RGBA{30, 90, 120, 1}, color.RGBA{200, 130, 76, 1}}
 
 const (
-	whiteIndex1 = 0 // first color in palette2
-	// blackIndex2  = 1 // next color in palette2
-	// randomColor1 = 2
-	// randomColor2 = 3
-
+	whiteIndex  = 0 // first color in palette2
+	blackIndex2 = 1 // next color in palette2
 )
-
-var colors = []uint8{1, 2, 3}
 
 func main() {
 	lissajous(os.Stdout)
 }
-
-func lissajous(out2 io.Writer) {
+func lissajous(out io.Writer) {
 	const (
 		cycles  = 5     // number of complete x oscillator revolutions
 		res     = 0.001 // angular resolution
@@ -47,18 +41,16 @@ func lissajous(out2 io.Writer) {
 	for i := 0; i < nframes; i++ {
 		rect := image.Rect(0, 0, 2*size+1, 2*size+1)
 		img := image.NewPaletted(rect, palette2)
-
 		for t := 0.0; t < cycles*2*math.Pi; t += res {
 			x := math.Sin(t)
 			y := math.Sin(t*freq + phase)
-
-			rand.Seed(time.Now().Unix())
 			img.SetColorIndex(size+int(x*size+0.5), size+int(y*size+0.5),
-				rand.Intn(len(colors)))
+				blackIndex2)
+
 		}
 		phase += 0.1
 		anim.Delay = append(anim.Delay, delay)
 		anim.Image = append(anim.Image, img)
 	}
-	gif.EncodeAll(out2, &anim) // NOTE: ignoring encoding errors
+	gif.EncodeAll(out, &anim) // NOTE: ignoring encoding errors
 }
