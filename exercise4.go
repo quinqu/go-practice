@@ -11,9 +11,10 @@ import (
 
 func main() {
 	counts := make(map[string]int)
+	countsWithFiles := make(map[string][]string)
 	files := os.Args[1:]
 	if len(files) == 0 {
-		countLines(os.Stdin, counts, "")
+		countLines(os.Stdin, counts, countsWithFiles, "")
 	} else {
 		for _, arg := range files {
 			f, err := os.Open(arg)
@@ -21,19 +22,30 @@ func main() {
 				fmt.Fprintf(os.Stderr, "dup2: %v\n", err)
 				continue
 			}
-			countLines(f, counts, arg)
+			countLines(f, counts, countsWithFiles, arg) //passing each file into countLines
+
+			//if counts increments on a word with a different arg name (file name) append to
+			//output string
+
 			f.Close()
+		}
+	}
+
+	for k, v := range countsWithFiles {
+		if counts[k] > 1 {
+			fmt.Println(k)
+
+			fmt.Println("duplicated in ", v)
+
 		}
 	}
 }
 
-func countLines(f *os.File, counts map[string]int, fileName string) {
+func countLines(f *os.File, counts map[string]int, countsWithFiles map[string][]string, fileName string) {
 	input := bufio.NewScanner(f)
 	for input.Scan() {
 		counts[input.Text()]++
-		if counts[input.Text()] > 1 {
-			fmt.Println(fileName)
-		}
+		countsWithFiles[input.Text()] = append(countsWithFiles[input.Text()], fileName)
 	}
 
 }
