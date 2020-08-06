@@ -19,8 +19,9 @@ const (
 
 func main() {
 	lissajous(os.Stdout)
+
 }
-func lissajous(out io.Writer) {
+func lissajous(out2 io.Writer) {
 	const (
 		cycles  = 5     // number of complete x oscillator revolutions
 		res     = 0.001 // angular resolution
@@ -44,5 +45,5 @@ func lissajous(out io.Writer) {
 		anim.Delay = append(anim.Delay, delay)
 		anim.Image = append(anim.Image, img)
 	}
-	gif.EncodeAll(out, &anim) // NOTE: ignoring encoding errors
+	gif.EncodeAll(out2, &anim) // NOTE: ignoring encoding errors
 }
