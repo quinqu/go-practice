@@ -1,7 +1,14 @@
 package main
 
 //code before the exercise
+
+// Modify the Lissajous server to read parameter values fro m the URL. For example,
+// you might arrange it so that a URL like http://localhost:8000/?cycles=20 sets the
+// number of cycles to 20 instead of the default 5. Use the strconv.Atoi function to convert the
+// string parameter into an int eger. You can see its documentation with go doc strconv.Atoi.
+
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/gif"
@@ -10,14 +17,19 @@ import (
 	"math"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"sync"
 )
 
 var mu sync.Mutex
 
 func main() {
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		lissajous(w)
+		r.ParseForm()
+		cycles := r.Form.Get("cycles")
+		fmt.Println(cycles)
+		lissajous(w, strconv.Atoi(cycles))
 	})
 
 	log.Fatal(http.ListenAndServe("localhost:8000", nil))
@@ -31,14 +43,14 @@ const (
 	greenIndex = 1 // next color in palette
 )
 
-func lissajous(out2 io.Writer) {
+func lissajous(out2 io.Writer, input int) {
 	const (
-		cycles  = 5     // number of complete x oscillator revolutions
 		res     = 0.001 // angular resolution
 		size    = 100   // image canvas covers [-size..+size]
 		nframes = 64    // number of animation frames
 		delay   = 8     // delay between frames in 10ms units
 	)
+	cycles := float64(input)     // number of complete x oscillator revolutions from request
 	freq := rand.Float64() * 3.0 // relative frequency of y oscillator
 	anim := gif.GIF{LoopCount: nframes}
 	phase := 0.0 // phase difference
