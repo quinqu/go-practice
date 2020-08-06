@@ -1,10 +1,3 @@
-// Modify the Lissajous program to produce images in
-// multiple colors by adding more values to palette2 and then
-// displaying them by changing the third argument of
-// SetColorIndex in some interesting way
-
-// Lissajous generates GIF animations of random Lissajous figures.
-// Lissajous generates GIF animations of random Lissajous figures.
 package main
 
 import (
@@ -17,11 +10,11 @@ import (
 	"os"
 )
 
-var palette2 = []color.Color{color.White, color.Black, color.RGBA{30, 90, 120, 1}, color.RGBA{200, 130, 76, 1}}
+var palette = []color.Color{color.White, color.Black}
 
 const (
-	whiteIndex  = 0 // first color in palette2
-	blackIndex2 = 1 // next color in palette2
+	whiteIndex = 0 // first color in palette
+	blackIndex = 1 // next color in palette
 )
 
 func main() {
@@ -40,17 +33,15 @@ func lissajous(out io.Writer) {
 	phase := 0.0 // phase difference
 	for i := 0; i < nframes; i++ {
 		rect := image.Rect(0, 0, 2*size+1, 2*size+1)
-		img := image.NewPaletted(rect, palette2)
+		img := image.NewPaletted(rect, palette)
 		for t := 0.0; t < cycles*2*math.Pi; t += res {
 			x := math.Sin(t)
 			y := math.Sin(t*freq + phase)
 			img.SetColorIndex(size+int(x*size+0.5), size+int(y*size+0.5),
-				blackIndex2)
-
+				blackIndex)
 		}
 		phase += 0.1
 		anim.Delay = append(anim.Delay, delay)
 		anim.Image = append(anim.Image, img)
 	}
-	gif.EncodeAll(out, &anim) // NOTE: ignoring encoding errors
 }
